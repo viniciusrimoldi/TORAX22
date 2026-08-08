@@ -12,6 +12,17 @@
         <title> TORAX22 - Cirurgia Torácica </title>
 
         <style>
+			select.descricoes-torax {
+				width: 98vw;
+			    padding: 4px;
+			}
+			
+			textarea.editor {
+				width: 98vw;
+			    height: 500px;
+			    padding: 12px;
+			}
+			
         </style>
 	</head>
 	<body>
