@@ -22,7 +22,6 @@
 			    height: 500px;
 			    padding: 12px;
 			}
-			
         </style>
 	</head>
 	<body>
