@@ -18,7 +18,7 @@
 			}
 			
 			textarea.editor {
-				width: 98vw;
+				width: 96vw;
 			    height: 500px;
 			    padding: 12px;
 			}
