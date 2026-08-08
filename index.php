@@ -10,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title> TORAX22 - Cirurgia Torácica </title>
-
+		
         <style>
 			select.descricoes-torax {
 				width: 98vw;
