@@ -6,7 +6,8 @@
         <title>TORAX22</title>
 
         <meta name="description" content="Informações sobre descrições cirurgicas em cirurgia torácica">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+      
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title> TORAX22 - Cirurgia Torácica </title>
 		
