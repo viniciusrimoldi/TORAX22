@@ -1,19 +1,67 @@
 <?php
+header('charset=utf-8');
 
-$slug = $_GET['slug'] ?? 'home';
+$diretorio = __DIR__ . '/descricoes';
+$resultado = [];
 
-require __DIR__ . '/core/markdown.php';
+foreach (scandir($diretorio) as $arquivo) {
+	if ($arquivo === '.' || $arquivo === '..') {
+		continue;
+	}
 
-$file = __DIR__ . "/conteudo/$slug.md";
+	$caminho = $diretorio . DIRECTORY_SEPARATOR . $arquivo;
 
-if ( !file_exists( $file ) ) {
-    http_response_code(404);
-    echo "Página não encontrada";
-    exit;
+	// Ignora subdiretórios
+	if (!is_file($caminho)) {
+		continue;
+	}
+
+	$resultado[] = [
+		'nome' => $arquivo,
+		'conteudo' => file_get_contents($caminho)
+	];
 }
 
-$content = file_get_contents( $file );
+echo '<script> const descricoesTorax = '
+	. json_encode($resultado, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) 
+	. '; </script>';
 
-$data = parseMarkdownWithMeta( $content );
+?>
 
-require __DIR__ . '/templates/page.php';
+<select class="descricoes-torax">
+	<option value="">Descrições Cirúrgicas</option>
+</select>
+
+<br>
+
+<textarea class="editor"></textarea>
+
+
+<script>
+
+	// Cria o select
+	const select = document. querySelector( "select.descricoes-torax" );
+	
+	
+	// Adiciona os nomes do JSON ao select
+	descricoesTorax .forEach( ( item, index ) => {
+		const option = document .createElement( "option" );
+
+		option .value = index;
+		option .textContent = item .nome;
+
+		select .appendChild( option );
+	});
+
+
+	// Quando selecionar uma opção
+	select .addEventListener( "change", function () {
+		const itemSelecionado = descricoesTorax[ this .value ];
+
+		if ( itemSelecionado ) {
+			document .querySelector( "textarea.editor" ) .value = 
+				itemSelecionado .conteudo;
+		}
+	});
+
+</script>
