@@ -1,7 +1,7 @@
 <?php
 header('charset=utf-8');
 
-$diretorio = __DIR__ . '/descricoes';
+$diretorio = __DIR__ . '/DESCRICOES';
 $resultado = [];
 
 foreach (scandir($diretorio) as $arquivo) {
