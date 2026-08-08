@@ -93,6 +93,103 @@ echo '<script> const descricoesTorax = '
 		}
 	});
 
+
+const editor = document .querySelector( "textarea.editor" );
+
+editor.addEventListener('keydown', function (e) {
+    const start = this.selectionStart;
+    const end = this.selectionEnd;
+    const value = this.value;
+
+    // Tab -> 4 espaços
+    if (e.key === 'Tab') {
+        e.preventDefault();
+
+        this.setRangeText(
+            '    ',
+            start,
+            end,
+            'end'
+        );
+
+        return;
+    }
+
+    // Ctrl+C sem seleção -> copia a linha atual
+    if (e.ctrlKey && e.key.toLowerCase() === 'c' && start === end) {
+        e.preventDefault();
+
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        let lineEnd = value.indexOf('\n', start);
+
+        if (lineEnd === -1) {
+            lineEnd = value.length;
+        }
+
+        const line = value.substring(lineStart, lineEnd);
+
+        navigator.clipboard.writeText(line);
+        return;
+    }
+
+    // Ctrl+X sem seleção -> recorta a linha atual
+    if (e.ctrlKey && e.key.toLowerCase() === 'x' && start === end) {
+        e.preventDefault();
+
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        let lineEnd = value.indexOf('\n', start);
+
+        if (lineEnd === -1) {
+            lineEnd = value.length;
+        }
+
+        // Inclui a quebra de linha, quando existir
+        const deleteEnd = lineEnd < value.length
+            ? lineEnd + 1
+            : lineStart > 0
+                ? lineStart - 1
+                : lineEnd;
+
+        const line = value.substring(lineStart, lineEnd);
+
+        navigator.clipboard.writeText(line);
+
+        this.value =
+            value.substring(0, lineStart) +
+            value.substring(deleteEnd);
+
+        this.selectionStart = this.selectionEnd =
+            Math.min(lineStart, this.value.length);
+
+        return;
+    }
+
+    // Ctrl+D sem seleção -> deleta a linha atual
+    if (e.ctrlKey && e.key.toLowerCase() === 'd' && start === end) {
+        e.preventDefault();
+
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        let lineEnd = value.indexOf('\n', start);
+
+        if (lineEnd === -1) {
+            lineEnd = value.length;
+        }
+
+        const deleteEnd = lineEnd < value.length
+            ? lineEnd + 1
+            : lineStart > 0
+                ? lineStart - 1
+                : lineEnd;
+
+        this.value =
+            value.substring(0, lineStart) +
+            value.substring(deleteEnd);
+
+        this.selectionStart = this.selectionEnd =
+            Math.min(lineStart, this.value.length);
+    }
+});
+
 </script>
     </body>
 </html>
