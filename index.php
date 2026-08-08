@@ -1,3 +1,21 @@
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+
+        <title>TORAX22</title>
+
+        <meta name="description" content="Informações sobre descrições cirurgicas em cirurgia torácica">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title> TORAX22 - Cirurgia Torácica </title>
+
+        <style>
+        </style>
+	</head>
+	<body>
+        
 <?php
 header('charset=utf-8');
 
@@ -65,3 +83,5 @@ echo '<script> const descricoesTorax = '
 	});
 
 </script>
+    </body>
+</html>
