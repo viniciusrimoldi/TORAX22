@@ -30,6 +30,12 @@ if ( $zip->open( $zipFile ) === true) {
 			continue;
 		}
 
+		// Ignora arquivos .json
+	    if (strtolower(pathinfo($arquivo, PATHINFO_EXTENSION)) === 'json') {
+    	    continue;
+    	}
+
+
 		$caminho = $diretorio . DIRECTORY_SEPARATOR . $arquivo;
 
 		// Ignora subdiretórios
