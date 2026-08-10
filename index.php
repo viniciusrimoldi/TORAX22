@@ -1,194 +1,169 @@
 <!doctype html>
 <html lang="pt-br">
-    <head>
-        <meta charset="utf-8">
+	<head>
+		<meta charset="utf-8">
 
-        <title>TORAX22</title>
+		<title>TORAX22</title>
 
-        <meta name="description" content="Informações sobre descrições cirurgicas em cirurgia torácica">
-      
+		<meta name="description" content="Informações sobre descrições cirurgicas em cirurgia torácica">
+
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title> TORAX22 - Cirurgia Torácica </title>
-		
-        <style>
+		<title> TORAX22 - Cirurgia Torácica </title>
+
+		<style>
 			select.descricoes-torax {
 				width: 98vw;
-			    padding: 4px;
+				padding: 4px;
 			}
-			
+
 			textarea.editor {
 				width: 96vw;
-			    height: 500px;
-			    padding: 12px;
+				height: 500px;
+				padding: 12px;
 			}
-        </style>
+		</style>
 	</head>
 	<body>
-        
-<?php
-header('charset=utf-8');
 
-$diretorio = __DIR__ . '/DESCRICOES';
-$resultado = [];
+		<?php
+		$json = __DIR__ . '/DESCRICOES/data.json';
+		echo '<script> const descricoesTorax = ' . file_get_contents( $json ) . '; </script>'
+		?>
 
-foreach (scandir($diretorio) as $arquivo) {
-	if ($arquivo === '.' || $arquivo === '..') {
-		continue;
-	}
+		<select class="descricoes-torax">
+			<option value="">Descrições Cirúrgicas</option>
+		</select>
 
-	$caminho = $diretorio . DIRECTORY_SEPARATOR . $arquivo;
+		<br>
 
-	// Ignora subdiretórios
-	if (!is_file($caminho)) {
-		continue;
-	}
-
-	$resultado[] = [
-		'nome' => $arquivo,
-		'conteudo' => file_get_contents($caminho)
-	];
-}
-
-echo '<script> const descricoesTorax = '
-	. json_encode($resultado, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) 
-	. '; </script>';
-
-?>
-
-<select class="descricoes-torax">
-	<option value="">Descrições Cirúrgicas</option>
-</select>
-
-<br>
-
-<textarea class="editor"></textarea>
+		<textarea class="editor"></textarea>
 
 
-<script>
+		<script>
 
-	// Cria o select
-	const select = document. querySelector( "select.descricoes-torax" );
-	
-	
-	// Adiciona os nomes do JSON ao select
-	descricoesTorax .forEach( ( item, index ) => {
-		const option = document .createElement( "option" );
-
-		option .value = index;
-		option .textContent = item .nome;
-
-		select .appendChild( option );
-	});
+			// Cria o select
+			const select = document. querySelector( "select.descricoes-torax" );
 
 
-	// Quando selecionar uma opção
-	select .addEventListener( "change", function () {
-		const itemSelecionado = descricoesTorax[ this .value ];
+			// Adiciona os nomes do JSON ao select
+			descricoesTorax .forEach( ( item, index ) => {
+				const option = document .createElement( "option" );
 
-		if ( itemSelecionado ) {
-			document .querySelector( "textarea.editor" ) .value = 
-				itemSelecionado .conteudo;
-		}
-	});
+				option .value = index;
+				option .textContent = item .nome;
+
+				select .appendChild( option );
+			});
 
 
-const editor = document .querySelector( "textarea.editor" );
+			// Quando selecionar uma opção
+			select .addEventListener( "change", function () {
+				const itemSelecionado = descricoesTorax[ this .value ];
 
-editor.addEventListener('keydown', function (e) {
-    const start = this.selectionStart;
-    const end = this.selectionEnd;
-    const value = this.value;
+				if ( itemSelecionado ) {
+					document .querySelector( "textarea.editor" ) .value = 
+						itemSelecionado .conteudo;
+				}
+			});
 
-    // Tab -> 4 espaços
-    if (e.key === 'Tab') {
-        e.preventDefault();
 
-        this.setRangeText(
-            '    ',
-            start,
-            end,
-            'end'
-        );
+			const editor = document .querySelector( "textarea.editor" );
 
-        return;
-    }
+			editor.addEventListener('keydown', function (e) {
+				const start = this.selectionStart;
+				const end = this.selectionEnd;
+				const value = this.value;
 
-    // Ctrl+C sem seleção -> copia a linha atual
-    if (e.ctrlKey && e.key.toLowerCase() === 'c' && start === end) {
-        e.preventDefault();
+				// Tab -> 4 espaços
+				if (e.key === 'Tab') {
+					e.preventDefault();
 
-        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-        let lineEnd = value.indexOf('\n', start);
+					this.setRangeText(
+						'    ',
+						start,
+						end,
+						'end'
+					);
 
-        if (lineEnd === -1) {
-            lineEnd = value.length;
-        }
+					return;
+				}
 
-        const line = value.substring(lineStart, lineEnd);
+				// Ctrl+C sem seleção -> copia a linha atual
+				if (e.ctrlKey && e.key.toLowerCase() === 'c' && start === end) {
+					e.preventDefault();
 
-        navigator.clipboard.writeText(line);
-        return;
-    }
+					const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+					let lineEnd = value.indexOf('\n', start);
 
-    // Ctrl+X sem seleção -> recorta a linha atual
-    if (e.ctrlKey && e.key.toLowerCase() === 'x' && start === end) {
-        e.preventDefault();
+					if (lineEnd === -1) {
+						lineEnd = value.length;
+					}
 
-        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-        let lineEnd = value.indexOf('\n', start);
+					const line = value.substring(lineStart, lineEnd);
 
-        if (lineEnd === -1) {
-            lineEnd = value.length;
-        }
+					navigator.clipboard.writeText(line);
+					return;
+				}
 
-        // Inclui a quebra de linha, quando existir
-        const deleteEnd = lineEnd < value.length
-            ? lineEnd + 1
-            : lineStart > 0
-                ? lineStart - 1
-                : lineEnd;
+				// Ctrl+X sem seleção -> recorta a linha atual
+				if (e.ctrlKey && e.key.toLowerCase() === 'x' && start === end) {
+					e.preventDefault();
 
-        const line = value.substring(lineStart, lineEnd);
+					const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+					let lineEnd = value.indexOf('\n', start);
 
-        navigator.clipboard.writeText(line);
+					if (lineEnd === -1) {
+						lineEnd = value.length;
+					}
 
-        this.value =
-            value.substring(0, lineStart) +
-            value.substring(deleteEnd);
+					// Inclui a quebra de linha, quando existir
+					const deleteEnd = lineEnd < value.length
+					? lineEnd + 1
+					: lineStart > 0
+					? lineStart - 1
+					: lineEnd;
 
-        this.selectionStart = this.selectionEnd =
-            Math.min(lineStart, this.value.length);
+					const line = value.substring(lineStart, lineEnd);
 
-        return;
-    }
+					navigator.clipboard.writeText(line);
 
-    // Ctrl+D sem seleção -> deleta a linha atual
-    if (e.ctrlKey && e.key.toLowerCase() === 'd' && start === end) {
-        e.preventDefault();
+					this.value =
+						value.substring(0, lineStart) +
+						value.substring(deleteEnd);
 
-        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-        let lineEnd = value.indexOf('\n', start);
+					this.selectionStart = this.selectionEnd =
+						Math.min(lineStart, this.value.length);
 
-        if (lineEnd === -1) {
-            lineEnd = value.length;
-        }
+					return;
+				}
 
-        const deleteEnd = lineEnd < value.length
-            ? lineEnd + 1
-            : lineStart > 0
-                ? lineStart - 1
-                : lineEnd;
+				// Ctrl+D sem seleção -> deleta a linha atual
+				if (e.ctrlKey && e.key.toLowerCase() === 'd' && start === end) {
+					e.preventDefault();
 
-        this.value =
-            value.substring(0, lineStart) +
-            value.substring(deleteEnd);
+					const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+					let lineEnd = value.indexOf('\n', start);
 
-        this.selectionStart = this.selectionEnd =
-            Math.min(lineStart, this.value.length);
-    }
-});
+					if (lineEnd === -1) {
+						lineEnd = value.length;
+					}
 
-</script>
-    </body>
+					const deleteEnd = lineEnd < value.length
+					? lineEnd + 1
+					: lineStart > 0
+					? lineStart - 1
+					: lineEnd;
+
+					this.value =
+						value.substring(0, lineStart) +
+						value.substring(deleteEnd);
+
+					this.selectionStart = this.selectionEnd =
+						Math.min(lineStart, this.value.length);
+				}
+			});
+
+		</script>
+	</body>
 </html>
